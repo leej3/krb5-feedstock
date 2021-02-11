@@ -16,12 +16,18 @@ if [[ "$target_platform" == "osx-arm64" ]]; then
     sed -i.bak "s@mig -header@mig -cc $(which $CC) -arch arm64 -header@g" src/lib/krb5/ccache/Makefile.in
 fi
 
+if [[ $BOOTSTRAPPING == yes ]]; then
+    export TK_OPT="--without-tcl"
+else
+    export TK_OPT="--with-tcl=${PREFIX}"
+fi
+
 pushd src
   autoreconf -i
   ./configure --prefix=${PREFIX}          \
               --host=${HOST}              \
               --build=${BUILD}            \
-              --with-tcl=${PREFIX}        \
+              $TK_OPT                     \
               --without-readline          \
               --with-libedit              \
               --with-crypto-impl=openssl  \

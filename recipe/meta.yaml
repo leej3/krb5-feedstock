@@ -9,7 +9,14 @@ source:
   sha256: 30f29cef5f18b02fae2210ec12382eab88ba66c2ecfa482e2f3232bed30d7e5d
 
 build:
+{% if bootstrapping == 'yes' %}
   number: 0
+  string: h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_bootstrapping
+  script_env:
+    - BOOTSTRAPPING=yes
+{% else %}
+  number: 2
+{% endif %}
   skip: true  # [win and vc<14]
   run_exports:
     # stable within minor revisions: https://abi-laboratory.pro/tracker/timeline/krb5/
@@ -19,26 +26,27 @@ build:
 
 requirements:
   build:
-    - libtool  # [unix]
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
+    - libtool     # [unix]
     - bison       # [not win]
     - autoconf    # [not win]
     - posix       # [win]
     - perl        # [win]
     - pkg-config  # [unix]
     - make        # [unix]
-    - python 3.7  # [not win]
-    - python      # [win]
     - openssl
   host:
     - libedit     # [unix]
     - openssl
+{% if bootstrapping != 'yes' %}
     - tk
+{% endif %}
   run:
     - {{ pin_compatible('libedit') }}  # [unix]
 
 outputs:
+{% if bootstrapping != 'yes' %}
   - name: krb5
     test:
       requires:
@@ -47,7 +55,7 @@ outputs:
         - python        # [win]
       commands:
         - python krb5_test.py
-
+{% endif %}
   - name: krb5-static
     build:
       skip: true  # [win]
@@ -62,13 +70,13 @@ outputs:
         - perl        # [win]
         - pkg-config  # [unix]
         - make        # [unix]
-        - python 3.7  # [not win]
-        - python      # [win]
         - openssl
       host:
         - libedit     # [unix]
         - openssl
+{% if bootstrapping != 'yes' %}
         - tk
+{% endif %}
       run:
         - {{ pin_subpackage('krb5', exact=True) }}
         - {{ pin_compatible('libedit') }}  # [unix]
