@@ -17,9 +17,9 @@ if [[ "$target_platform" == "osx-arm64" ]]; then
 fi
 
 if [[ $BOOTSTRAPPING == yes ]]; then
-    export TK_OPT="--without-tcl"
+    export OPTS="--without-tcl --without-libedit"
 else
-    export TK_OPT="--with-tcl=${PREFIX}"
+    export TCL_OPT="--with-tcl=${PREFIX} --with-libedit"
 fi
 
 pushd src
@@ -27,9 +27,8 @@ pushd src
   ./configure --prefix=${PREFIX}          \
               --host=${HOST}              \
               --build=${BUILD}            \
-              $TK_OPT                     \
+              $OPTS                       \
               --without-readline          \
-              --with-libedit              \
               --with-crypto-impl=openssl  \
               --without-system-verto
 

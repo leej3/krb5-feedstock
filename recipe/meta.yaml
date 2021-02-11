@@ -18,9 +18,9 @@ build:
   number: 2
 {% endif %}
   skip: true  # [win and vc<14]
+{% if bootstrapping != 'yes' %}
   run_exports:
     # stable within minor revisions: https://abi-laboratory.pro/tracker/timeline/krb5/
-{% if bootstrapping != 'yes' %}
     - {{ pin_subpackage('krb5', max_pin='x.x') }}
 {% endif %}
   missing_dso_whitelist:   # [osx]
@@ -43,9 +43,9 @@ requirements:
     - openssl
 {% if bootstrapping != 'yes' %}
     - tk
-{% endif %}
   run:
     - {{ pin_compatible('libedit') }}  # [unix]
+{% endif %}
 
 outputs:
   - name: krb5
@@ -82,8 +82,8 @@ outputs:
       run:
 {% if bootstrapping != 'yes' %}
         - {{ pin_subpackage('krb5', exact=True) }}
-{% endif %}
         - {{ pin_compatible('libedit') }}  # [unix]
+{% endif %}
     test:
       commands:
         - test -f ${PREFIX}/lib/libk5crypto.a  # [unix]
