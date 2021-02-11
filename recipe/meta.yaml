@@ -57,7 +57,6 @@ outputs:
         - python        # [win]
       commands:
         - python krb5_test.py
-{% endif %}
   - name: krb5-static
     build:
       skip: true  # [win]
@@ -76,11 +75,8 @@ outputs:
       host:
         - libedit     # [unix]
         - openssl
-{% if bootstrapping != 'yes' %}
         - tk
-{% endif %}
       run:
-{% if bootstrapping != 'yes' %}
         - {{ pin_subpackage('krb5', exact=True) }}
         - {{ pin_compatible('libedit') }}  # [unix]
 {% endif %}
