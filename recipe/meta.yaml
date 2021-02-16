@@ -30,6 +30,7 @@ requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
+{% if bootstrapping != 'yes' %}
     - libtool     # [unix]
     - bison       # [not win]
     - autoconf    # [not win]
@@ -41,7 +42,6 @@ requirements:
   host:
     - libedit     # [unix]
     - openssl
-{% if bootstrapping != 'yes' %}
     - tk
   run:
     - {{ pin_compatible('libedit') }}  # [unix]

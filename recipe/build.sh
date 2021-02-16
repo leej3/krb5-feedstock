@@ -1,12 +1,14 @@
 #!/bin/bash
 # Get an updated config.sub and config.guess
-cp $BUILD_PREFIX/share/libtool/build-aux/config.* ./src/config
+if [[ ! $BOOTSTRAPPING == yes ]]; then
+  cp $BUILD_PREFIX/share/libtool/build-aux/config.* ./src/config
+  # https://github.com/conda-forge/bison-feedstock/issues/7
+  export M4="${BUILD_PREFIX}/bin/m4"
+fi
+
 set -xe
 
 export CPPFLAGS="${CPPFLAGS/-DNDEBUG/}"
-
-# https://github.com/conda-forge/bison-feedstock/issues/7
-export M4="${BUILD_PREFIX}/bin/m4"
 
 if [[ "$target_platform" == "osx-arm64" ]]; then
     # This can't be deduced when cross-compiling
